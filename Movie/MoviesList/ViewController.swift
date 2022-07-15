@@ -8,32 +8,45 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     private var movies: [Results] = []
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         getMovies()
         registerCell()
     }
-
+    
     private func registerCell() {
+        searchBar.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UINib(nibName:"MovieTableViewCell", bundle: nil), forCellReuseIdentifier: MovieTableViewCell.identifier)
     }
     
+    //MARK: - Requests
+    
     private func getMovies() {
         Request.shared.fetchMovies { result  in
             switch result {
-            case .success(let values):
-                guard let values = values else {return}
-                Request.shared.getMovies(data: values) { movies in
-                    self.movies = movies
-                    self.tableView.reloadData()
-                }
+            case .success(let movies):
+                self.movies = movies
+                self.tableView.reloadData()
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func search(input: String) {
+        Request.shared.searchMovies(query: input) { result in
+            switch result {
+            case .success(let movies):
+                self.movies = movies
+                self.tableView.reloadData()
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -41,8 +54,9 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController : UITableViewDelegate, UITableViewDataSource {
 
+extension ViewController : UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies.count
     }
@@ -57,4 +71,34 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         return 150
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let id = movies[indexPath.row]
+        let viewController = UIStoryboard(name: "MovieDetails", bundle: nil).instantiateViewController(withIdentifier: "MovieViewController") as? MovieViewController
+        if let viewController = viewController {
+            viewController.movie = movies[indexPath.row]
+            navigationController?.pushViewController(viewController, animated: true)
+        }
+    }
+    
+}
+
+extension ViewController: UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+//        let input = searchBar.text.replacingCharacters(in: range, with: text) ?? ""
+        let input = NSString(string: searchBar.text!).replacingCharacters(in: range, with: text)
+        self.search(input: input)
+        tableView.reloadData()
+        return true
+        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            searchBar.showsCancelButton = false
+            self.search(input: "")
+            return
+        }
+        self.search(input: searchText)
+    }
 }

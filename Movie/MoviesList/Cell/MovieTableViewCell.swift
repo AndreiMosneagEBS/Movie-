@@ -22,9 +22,6 @@ class MovieTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         sertImage()
-
-        // Initialization code
-        
     }
     
     override func prepareForReuse() {
@@ -36,15 +33,14 @@ class MovieTableViewCell: UITableViewCell {
     
      func sertImage() {
         imageOnCell.layer.cornerRadius = 8
-//         imageOnCell.layer.borderWidth = 1
-//         imageOnCell.layer.borderColor = UIColor.red.cgColor
+        imageOnCell.layer.borderColor = UIColor.red.cgColor
     }
     
     func setup(model: Results) {
         titleMovie.text = model.title
-        voteAverageMovie.text = String(model.voteAverage)
+        voteAverageMovie.text = "\(model.voteAverage)"
         yersMovie.text = model.releaseDate
-        imageOnCell.setImage(with: "https://image.tmdb.org/t/p/w500/\(model.posterPath)")
+        imageOnCell.setImage(with: "\(IMAGE_URL)\(model.posterPath)")
     }
    
 }

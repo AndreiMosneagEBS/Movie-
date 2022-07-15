@@ -13,28 +13,40 @@ import Foundation
 class Request {
     
     static let shared = Request()
+    let decoder = JSONDecoder()
     
-    func fetchMovies(completion: @escaping (Result<Data?,Error>)-> Void) {
-        
-        AF.request("https://api.themoviedb.org/3/discover/movie?api_key=591c9e4cb1d729304b880495da45b414").response { response in
+    func fetchMovies(completion: @escaping (Result<[Results],Error>)-> Void) {
+        AF.request("https://api.themoviedb.org/3/discover/movie?api_key=\(API_KEY)").response { response in
             switch response.result {
             case .success(let values):
-                completion(.success(values))
+                if let values = values {
+                    let movies = try? self.decoder.decode(MovieModels.self, from: values)
+                    if let movies = movies {
+                        completion(.success(movies.results))
+                    }
+                }
             case .failure(let error):
                 completion(.failure(error))
             }
         }
     }
     
-    func getMovies(data: Data, completion: ([Results]) -> Void) {
-        let decoder = JSONDecoder()
-        do {
-            let movies = try? decoder.decode(MovieModels.self, from: data)
-            if let movies = movies {
-                completion(movies.results)
+    func searchMovies(query: String, completion: @escaping (Result<[Results], Error>)->  Void ) {
+        AF.request("https://api.themoviedb.org/3/search/movie?api_key=\(API_KEY)&query=\(query)", method: .get).response {response in
+                 // https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
+            switch response .result {
+            case .success(let value):
+                if let value = value {
+                    do {
+                        let movie = try self.decoder.decode(MovieModels.self, from: value)
+                        completion(.success(movie.results))
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            case .failure(let error):
+                completion (.failure(error))
             }
-        } catch {
-            print("error")
         }
     }
 }
