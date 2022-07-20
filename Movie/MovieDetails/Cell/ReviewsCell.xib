@@ -17,20 +17,51 @@
                 <rect key="frame" x="0.0" y="0.0" width="400" height="296"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="6sP-iN-rSJ">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aT4-TS-5Ls">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="296"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </tableView>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No reviews" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a21-pf-Nne">
+                        <rect key="frame" x="0.0" y="90" width="400" height="20.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.46274509800000002" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bgu-mz-zPs">
+                        <rect key="frame" x="16" y="218" width="358" height="48"/>
+                        <color key="backgroundColor" red="0.37647059560000001" green="0.42745098469999998" blue="0.87058818339999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="358" id="B12-XS-1n4"/>
+                            <constraint firstAttribute="height" constant="48" id="f3B-HZ-zgp"/>
+                        </constraints>
+                        <state key="normal" title="Button"/>
+                        <buttonConfiguration key="configuration" style="plain" title="Write a review">
+                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </buttonConfiguration>
+                        <connections>
+                            <action selector="writeReviewAction:" destination="gTV-IL-0wX" eventType="touchUpInside" id="RqI-kH-Vnt"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <constraints>
-                <constraint firstItem="6sP-iN-rSJ" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="YLo-Y8-AHs"/>
-                <constraint firstItem="6sP-iN-rSJ" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="Zz6-La-9u5"/>
-                <constraint firstAttribute="trailing" secondItem="6sP-iN-rSJ" secondAttribute="trailing" id="aOQ-NX-mni"/>
-                <constraint firstAttribute="bottom" secondItem="6sP-iN-rSJ" secondAttribute="bottom" id="g5O-FK-T8M"/>
+                <constraint firstAttribute="trailing" secondItem="bgu-mz-zPs" secondAttribute="trailing" constant="16" id="4g6-lG-gl1"/>
+                <constraint firstAttribute="bottom" secondItem="aT4-TS-5Ls" secondAttribute="bottom" id="6wE-h5-4eK"/>
+                <constraint firstItem="bgu-mz-zPs" firstAttribute="top" secondItem="a21-pf-Nne" secondAttribute="bottom" constant="107.5" id="8U7-l5-uoK"/>
+                <constraint firstItem="a21-pf-Nne" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="H8z-DI-gS4"/>
+                <constraint firstItem="bgu-mz-zPs" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="16" id="PfL-no-bKH"/>
+                <constraint firstAttribute="trailing" secondItem="a21-pf-Nne" secondAttribute="trailing" id="RiZ-Cm-mhv"/>
+                <constraint firstItem="aT4-TS-5Ls" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="Vto-fR-GX0"/>
+                <constraint firstAttribute="trailing" secondItem="aT4-TS-5Ls" secondAttribute="trailing" id="dhG-7t-ohE"/>
+                <constraint firstAttribute="bottom" secondItem="bgu-mz-zPs" secondAttribute="bottom" constant="30" id="jik-Sg-nTW"/>
+                <constraint firstItem="aT4-TS-5Ls" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="pyA-GK-uZF"/>
+                <constraint firstItem="a21-pf-Nne" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="90" id="yoX-Yl-EGg"/>
             </constraints>
             <size key="customSize" width="400" height="296"/>
+            <connections>
+                <outlet property="writeReview" destination="bgu-mz-zPs" id="8et-1Q-A9A"/>
+            </connections>
             <point key="canvasLocation" x="472.46376811594206" y="230.35714285714283"/>
         </collectionViewCell>
     </objects>

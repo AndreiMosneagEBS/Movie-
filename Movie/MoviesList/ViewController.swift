@@ -9,7 +9,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    private var movies: [Results] = []
+    private var movies: [Movie] = []
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -52,7 +52,11 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    
+    
 }
+
 
 
 extension ViewController : UITableViewDelegate, UITableViewDataSource {
@@ -85,7 +89,6 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
 extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-//        let input = searchBar.text.replacingCharacters(in: range, with: text) ?? ""
         let input = NSString(string: searchBar.text!).replacingCharacters(in: range, with: text)
         self.search(input: input)
         tableView.reloadData()

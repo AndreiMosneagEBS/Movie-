@@ -36,7 +36,7 @@ class MovieTableViewCell: UITableViewCell {
         imageOnCell.layer.borderColor = UIColor.red.cgColor
     }
     
-    func setup(model: Results) {
+    func setup(model: Movie) {
         titleMovie.text = model.title
         voteAverageMovie.text = "\(model.voteAverage)"
         yersMovie.text = model.releaseDate

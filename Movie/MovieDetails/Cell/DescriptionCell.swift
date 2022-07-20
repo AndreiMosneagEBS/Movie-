@@ -20,7 +20,7 @@ class DescriptionCell: UICollectionViewCell {
         // Initialization code
     }
     
-     func setup (model: Results?) {
+     func setup (model: Movie?) {
         descriptionText.text = model?.overview
     }
 

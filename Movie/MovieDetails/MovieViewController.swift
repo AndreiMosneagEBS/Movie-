@@ -12,73 +12,182 @@ enum TypeCell {
     case reviews
 }
 
+
 class MovieViewController: UIViewController {
     
-    var movie: Results?
-    var typeCell: TypeCell = .description
+    var movie: Movie?
+    private var reviews: [Review] = []
+    private var sections: [MovieCellType.Section] = []
+    private var typeCell: SelectedTab = .reviews
     
-    @IBOutlet weak var imageMovie: UIImageView!
-    @IBOutlet weak var titleMovie: UILabel!
-    @IBOutlet weak var averageScoreMovie: UILabel!
-    @IBOutlet weak var yearsMovie: UILabel!
-    @IBOutlet weak var collectionView: UICollectionView!
     
+    @IBOutlet private weak var tableView: UITableView!
+     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
         registerCell()
+        generateAllSection()
+        setSuperViews()
+        getReviews(movieId: movie?.id)
+    }
 
-    }
-    
     private func registerCell() {
-        collectionView.register(UINib(nibName: "DescriptionCell", bundle: nil), forCellWithReuseIdentifier: "DescriptionCell")
-        collectionView.register(UINib(nibName: "ReviewsCell", bundle: nil), forCellWithReuseIdentifier: "ReviewsCell")
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        tableView.register(UINib(nibName: "MovieCartTableViewCell", bundle: nil), forCellReuseIdentifier: "MovieCartTableViewCell")
+        tableView.register(UINib(nibName: "ReviewTableViewCell", bundle: nil), forCellReuseIdentifier: "ReviewTableViewCell")
+        tableView.register(UINib(nibName: "DescriptionTableViewCell", bundle: nil), forCellReuseIdentifier: "DescriptionTableViewCell")
+        tableView.register(UINib(nibName: "NoReviewsTableViewCell", bundle: nil), forCellReuseIdentifier: "NoReviewsTableViewCell")
+
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+    }
+    
+    private func generateHeaderSection(_ article: Movie )-> MovieCellType.Section  {
+        var newCell:[MovieCellType.CellType] = []
+        newCell.append(.header(model: article))
+        let headerCell: MovieCellType.Section =  .init(type: .header, cell: newCell)
+        return headerCell
     }
     
     
+    private func generateAboutMovieSection(movie: Movie, reviews: [Review]) -> MovieCellType.Section  {
+        
+        var aboutMovieCells: [MovieCellType.CellType] = []
+        
+        switch typeCell {
+        case .description:
+            aboutMovieCells.append(.description(movie.overview))
+            
+        case .reviews:
+            
+            if reviews.count > 0 {
+                reviews.forEach({ review in
+                    aboutMovieCells.append(.review(model: review))
+                })
+            } else {
+                aboutMovieCells.append(.noReviews)
+            }
+        }
+                
+        return MovieCellType.Section(type: .aboutMovie, cell: aboutMovieCells)
+    }
     
-    private func setup() {
+    private func generateAllSection() {
         guard let movie = movie else {
             return
         }
-        titleMovie.text = movie.title
-        averageScoreMovie.text = "\(movie.voteAverage)"
-        yearsMovie.text = movie.releaseDate
-        imageMovie.setImage(with: "\(IMAGE_URL)\(movie.posterPath)")
+
+        let headerSections = generateHeaderSection(movie)
+        let aboutMovie = generateAboutMovieSection(movie: movie, reviews: reviews)
         
+        var newSection: [MovieCellType.Section] = []
+        newSection.append(headerSections)
+        newSection.append(aboutMovie)
+        
+        sections = newSection
+        self.tableView.reloadData()
     }
-    @IBAction func descriptionAction(_ sender: Any) {
-        self.typeCell = .description
-        collectionView.reloadData()
+    
+    private func setSuperViews(){
+        tableView.contentInsetAdjustmentBehavior = .never
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.view.backgroundColor = UIColor.clear
+//        self.navigationController?.navigationBar.tintColor = .clear
 
     }
-    @IBAction func reviewAction(_ sender: Any) {
-        self.typeCell = .reviews
-        collectionView.reloadData()
+    
+    
+    private func getReviews(movieId: Int?) {
+        guard let id = movieId else {
+            return
+        }
+        Request.shared.getReviews(query: id) { result in
+            switch result {
+            case .success(let reviews):
+                self.reviews = reviews
+                self.generateAllSection()
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
 }
-extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+
+
+extension MovieViewController: UITableViewDelegate,  UITableViewDataSource  {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return sections[section].cell.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch self.typeCell {
-        case .description:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DescriptionCell", for: indexPath) as! DescriptionCell
-            cell.setup(model: movie)
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return sections.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cellType = sections[indexPath.section].cell[indexPath.row]
+        switch cellType {
+        case .header(let model):
+            let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCartTableViewCell", for: indexPath) as! MovieCartTableViewCell
+            cell.setup(model: model, review: reviews, type: typeCell)
+            
+            cell.onTapReview = { [weak self] in
+                self?.typeCell = .reviews
+                self?.generateAllSection()
+            }
+            
+            cell.onTapDescription = { [weak self] in
+                self?.typeCell = .description
+                self?.generateAllSection()
+            }
+            
             return cell
-        case .reviews:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReviewsCell", for: indexPath) as! ReviewsCell
+            
+        case .description(let overview):
+            let cell = tableView.dequeueReusableCell(withIdentifier: "DescriptionTableViewCell", for: indexPath) as! DescriptionTableViewCell
+            cell.isUserInteractionEnabled = false
+            cell.setup(overview: overview)
+            return cell
+            
+        case .noReviews:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "NoReviewsTableViewCell", for: indexPath) as! NoReviewsTableViewCell
+         
+            return cell
+            
+            
+        case .review(let model):
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReviewTableViewCell", for: indexPath) as! ReviewTableViewCell
+            
+            cell.setup(model: model)
             return cell
         }
-        
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return .init(width: collectionView.bounds.width, height: collectionView.bounds.height)
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let cellType = sections[indexPath.section].cell[indexPath.row]
+        switch cellType {
+        case .header:
+            return CGFloat(595)
+        case .noReviews:
+            return CGFloat(200)
+            
+        default:
+            return UITableView.automaticDimension
+        }
     }
     
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        let cellType = sections[indexPath.section].cell[indexPath.row]
+        switch cellType {
+        case .header:
+            return CGFloat(595)
+        case .noReviews:
+            return CGFloat(200)
+        default:
+            return UITableView.automaticDimension
+        }
+    }
 }

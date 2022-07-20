@@ -15,12 +15,12 @@ class Request {
     static let shared = Request()
     let decoder = JSONDecoder()
     
-    func fetchMovies(completion: @escaping (Result<[Results],Error>)-> Void) {
+    func fetchMovies(completion: @escaping (Result<[Movie],Error>)-> Void) {
         AF.request("https://api.themoviedb.org/3/discover/movie?api_key=\(API_KEY)").response { response in
             switch response.result {
             case .success(let values):
                 if let values = values {
-                    let movies = try? self.decoder.decode(MovieModels.self, from: values)
+                    let movies = try? self.decoder.decode(MovieResult.self, from: values)
                     if let movies = movies {
                         completion(.success(movies.results))
                     }
@@ -31,14 +31,13 @@ class Request {
         }
     }
     
-    func searchMovies(query: String, completion: @escaping (Result<[Results], Error>)->  Void ) {
+    func searchMovies(query: String, completion: @escaping (Result<[Movie], Error>)->  Void ) {
         AF.request("https://api.themoviedb.org/3/search/movie?api_key=\(API_KEY)&query=\(query)", method: .get).response {response in
-                 // https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
             switch response .result {
             case .success(let value):
                 if let value = value {
                     do {
-                        let movie = try self.decoder.decode(MovieModels.self, from: value)
+                        let movie = try self.decoder.decode(MovieResult.self, from: value)
                         completion(.success(movie.results))
                     } catch {
                         print(error.localizedDescription)
@@ -49,6 +48,26 @@ class Request {
             }
         }
     }
+    
+    func getReviews(query: Int, completion: @escaping (Result<[Review], Error>)->  Void ) {
+        AF.request("https://api.themoviedb.org/3/movie/\(query)/reviews?api_key=\(API_KEY)", method: .get).response { response in
+            switch response.result {
+            case .success(let value):
+                guard let value = value else {return}
+                do {
+                    let reviews = try self.decoder.decode(ReviewResult.self, from: value)
+                    completion(.success(reviews.results!))
+                    print( reviews)// Rezolva asta
+                } catch {
+                    print(error.localizedDescription)
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
 }
 
 

@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct MovieModels: Codable {
+struct MovieResult: Codable {
     let page: Int
-    let results: [Results]
+    let results: [Movie]
 
 }
 
 // MARK: - Result
-struct Results: Codable {
+struct Movie: Codable, Equatable {
     let originalLanguage: String
     let posterPath: String
     let releaseDate: String
@@ -23,7 +23,7 @@ struct Results: Codable {
     let voteCount: Int
     let popularity: Double
     let overview: String
-
+    let id: Int
 
     enum CodingKeys: String, CodingKey {
 
@@ -33,7 +33,7 @@ struct Results: Codable {
         case title
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
-        case overview, popularity
+        case overview, popularity, id
     }
 }
 
@@ -44,3 +44,48 @@ enum OriginalLanguage: String, Codable {
 }
 
 
+struct ReviewResult: Codable {
+    let id, page: Int?
+    let results: [Review]?
+    let totalPages, totalResults: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case id, page, results
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
+        
+    }
+}
+
+struct Review: Codable, Equatable {
+    static func == (lhs: Review, rhs: Review) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    let author: String?
+    let authorDetails: AuthorDetails?
+    let content, createdAt, id, updatedAt: String
+    let url: String?
+
+    enum CodingKeys: String, CodingKey {
+        case author
+        case authorDetails = "author_details"
+        case content
+        case createdAt = "created_at"
+        case id
+        case updatedAt = "updated_at"
+        case url
+    }
+}
+
+// MARK: - AuthorDetails
+struct AuthorDetails: Codable {
+    let name, username, avatarPath: String?
+    let rating: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case name, username
+        case avatarPath = "avatar_path"
+        case rating
+    }
+}
