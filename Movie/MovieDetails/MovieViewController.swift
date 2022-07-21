@@ -19,6 +19,7 @@ class MovieViewController: UIViewController {
     private var reviews: [Review] = []
     private var sections: [MovieCellType.Section] = []
     private var typeCell: SelectedTab = .reviews
+    @IBOutlet weak var writeReview: UIButton!
     
     
     @IBOutlet private weak var tableView: UITableView!
@@ -27,39 +28,48 @@ class MovieViewController: UIViewController {
         super.viewDidLoad()
         registerCell()
         generateAllSection()
-        setSuperViews()
+//        setSuperViews()
         getReviews(movieId: movie?.id)
+        generateImageHeader()
+        setButton()
     }
-
+    
+    //MARK: - Register cell
+    
     private func registerCell() {
         tableView.register(UINib(nibName: "MovieCartTableViewCell", bundle: nil), forCellReuseIdentifier: "MovieCartTableViewCell")
         tableView.register(UINib(nibName: "ReviewTableViewCell", bundle: nil), forCellReuseIdentifier: "ReviewTableViewCell")
         tableView.register(UINib(nibName: "DescriptionTableViewCell", bundle: nil), forCellReuseIdentifier: "DescriptionTableViewCell")
         tableView.register(UINib(nibName: "NoReviewsTableViewCell", bundle: nil), forCellReuseIdentifier: "NoReviewsTableViewCell")
-
         tableView.delegate = self
         tableView.dataSource = self
         
+    
     }
     
-    private func generateHeaderSection(_ article: Movie )-> MovieCellType.Section  {
-        var newCell:[MovieCellType.CellType] = []
-        newCell.append(.header(model: article))
-        let headerCell: MovieCellType.Section =  .init(type: .header, cell: newCell)
-        return headerCell
+    private func setButton() {
+        writeReview.layer.cornerRadius = 8
     }
     
+    //MARK: - Generate cell
+    
+    private func generateImageHeader() {
+        let headerView = StretchyTableHeaderView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 350))
+        if let movie = movie {
+            headerView.setImage(UrlPhoto: "\(IMAGE_URL)\(movie.posterPath)")
+            self.tableView.tableHeaderView = headerView
+        }
+    }
     
     private func generateAboutMovieSection(movie: Movie, reviews: [Review]) -> MovieCellType.Section  {
         
-        var aboutMovieCells: [MovieCellType.CellType] = []
+        var aboutMovieCells: [MovieCellType.CellType] = [.header(model: movie)]
         
         switch typeCell {
         case .description:
             aboutMovieCells.append(.description(movie.overview))
             
         case .reviews:
-            
             if reviews.count > 0 {
                 reviews.forEach({ review in
                     aboutMovieCells.append(.review(model: review))
@@ -68,7 +78,6 @@ class MovieViewController: UIViewController {
                 aboutMovieCells.append(.noReviews)
             }
         }
-                
         return MovieCellType.Section(type: .aboutMovie, cell: aboutMovieCells)
     }
     
@@ -76,29 +85,14 @@ class MovieViewController: UIViewController {
         guard let movie = movie else {
             return
         }
-
-        let headerSections = generateHeaderSection(movie)
         let aboutMovie = generateAboutMovieSection(movie: movie, reviews: reviews)
         
         var newSection: [MovieCellType.Section] = []
-        newSection.append(headerSections)
         newSection.append(aboutMovie)
-        
         sections = newSection
         self.tableView.reloadData()
     }
-    
-    private func setSuperViews(){
-        tableView.contentInsetAdjustmentBehavior = .never
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.view.backgroundColor = UIColor.clear
-//        self.navigationController?.navigationBar.tintColor = .clear
 
-    }
-    
-    
     private func getReviews(movieId: Int?) {
         guard let id = movieId else {
             return
@@ -114,7 +108,29 @@ class MovieViewController: UIViewController {
             }
         }
     }
+    //MARK: - Action
+    
+    @IBAction func writeReviews(_ sender: Any) {
+        
+        let viewController = UIStoryboard(name: "WriteReviews", bundle: nil).instantiateViewController(withIdentifier: "WriteReviews") as? WriteReviews
+        if let viewController = viewController {
+            viewController.movieReview = movie
+            navigationController?.pushViewController(viewController, animated: true)
+
+        }
+    }
+    
+    @IBAction private func popToBack(_ sender: AnyObject? = nil) {
+           if let navigation = self.navigationController, navigation.children.count > 1 {
+               navigation.popViewController(animated: true)
+           } else {
+               self.dismiss(animated: true, completion: nil)
+           }
+       }
+    
+    
 }
+//MARK: - Extension
 
 
 extension MovieViewController: UITableViewDelegate,  UITableViewDataSource  {
@@ -130,17 +146,22 @@ extension MovieViewController: UITableViewDelegate,  UITableViewDataSource  {
         
         let cellType = sections[indexPath.section].cell[indexPath.row]
         switch cellType {
+
+            
         case .header(let model):
             let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCartTableViewCell", for: indexPath) as! MovieCartTableViewCell
             cell.setup(model: model, review: reviews, type: typeCell)
             
             cell.onTapReview = { [weak self] in
                 self?.typeCell = .reviews
+                self!.writeReview.isHidden = false
+
                 self?.generateAllSection()
             }
             
             cell.onTapDescription = { [weak self] in
                 self?.typeCell = .description
+                self!.writeReview.isHidden = true
                 self?.generateAllSection()
             }
             
@@ -170,9 +191,10 @@ extension MovieViewController: UITableViewDelegate,  UITableViewDataSource  {
         let cellType = sections[indexPath.section].cell[indexPath.row]
         switch cellType {
         case .header:
-            return CGFloat(595)
+            return CGFloat(180)
         case .noReviews:
             return CGFloat(200)
+     
             
         default:
             return UITableView.automaticDimension
@@ -182,12 +204,18 @@ extension MovieViewController: UITableViewDelegate,  UITableViewDataSource  {
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         let cellType = sections[indexPath.section].cell[indexPath.row]
         switch cellType {
-        case .header:
-            return CGFloat(595)
+    
         case .noReviews:
             return CGFloat(200)
         default:
             return UITableView.automaticDimension
         }
     }
+}
+
+extension MovieViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            let headerView = self.tableView.tableHeaderView as! StretchyTableHeaderView
+            headerView.scrollViewDidScroll(scrollView: scrollView)
+        }
 }

@@ -9,4 +9,6 @@ target 'Movie' do
 pod “SwiftyJSON”
 pod "Alamofire"
 pod “Kingfisher”
+pod "Cosmos"
+pod "TinyConstraints"
 end

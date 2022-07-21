@@ -23,11 +23,10 @@ class BaseTableViewCell: UITableViewCell {
 
 class MovieCartTableViewCell: BaseTableViewCell {
     
-    var typeCell: SelectedTab = .reviews
+    var typeCell: SelectedTab = .description
     var onTapDescription: (() -> Void)?
     var onTapReview: (() -> Void)?
     
-    @IBOutlet weak var imageMovie: UIImageView!
     @IBOutlet weak var titleMovie: UILabel!
     @IBOutlet weak var averageStar: UILabel!
     @IBOutlet weak var years: UILabel!
@@ -55,7 +54,7 @@ class MovieCartTableViewCell: BaseTableViewCell {
         titleMovie.text = model.title
         averageStar.text = String(model.voteAverage)
         years.text = model.releaseDate
-        imageMovie.setImage(with: "\(IMAGE_URL)\(model.posterPath)")
+        
         reviewsButtonOutlet.setTitle("Reviews (\(review.count))", for: .normal)
         
         switch type {

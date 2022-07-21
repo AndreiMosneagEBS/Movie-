@@ -18,6 +18,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         getMovies()
         registerCell()
+        setSuperViews()
     }
     
     private func registerCell() {
@@ -53,7 +54,15 @@ class ViewController: UIViewController {
         }
     }
     
-    
+    private func setSuperViews(){
+        tableView.contentInsetAdjustmentBehavior = .never
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.view.backgroundColor = UIColor.clear
+        self.navigationController?.navigationBar.tintColor = .clear
+
+    }
     
 }
 

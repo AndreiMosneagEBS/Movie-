@@ -16,31 +16,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="dfS-Le-3ik">
-                                <rect key="frame" x="16" y="43" width="382" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="5na-mB-uB7"/>
-                                </constraints>
-                                <textInputTraits key="textInputTraits"/>
-                            </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="i8A-Jy-1FP">
-                                <rect key="frame" x="0.0" y="83" width="414" height="779"/>
+                                <rect key="frame" x="0.0" y="39" width="414" height="823"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <searchBar key="tableHeaderView" contentMode="redraw" id="dfS-Le-3ik">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="5na-mB-uB7"/>
+                                    </constraints>
+                                    <textInputTraits key="textInputTraits"/>
+                                </searchBar>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="i8A-Jy-1FP" secondAttribute="trailing" id="1n1-5L-DOV"/>
-                            <constraint firstItem="i8A-Jy-1FP" firstAttribute="top" secondItem="dfS-Le-3ik" secondAttribute="bottom" id="8gE-Yk-qe5"/>
-                            <constraint firstItem="dfS-Le-3ik" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="-45" id="epf-2o-ka1"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="top" secondItem="i8A-Jy-1FP" secondAttribute="top" constant="5" id="BUd-fJ-KFY"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="i8A-Jy-1FP" secondAttribute="bottom" id="h0H-Ph-KsF"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="dfS-Le-3ik" secondAttribute="trailing" constant="16" id="lXx-YC-EgT"/>
-                            <constraint firstItem="dfS-Le-3ik" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="t0g-Nq-YyX"/>
                             <constraint firstItem="i8A-Jy-1FP" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="yZt-oW-s1p"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="mfF-Pt-8sd"/>
+                    <navigationItem key="navigationItem" id="byp-TG-KGB"/>
                     <connections>
                         <outlet property="searchBar" destination="dfS-Le-3ik" id="ctI-rd-Saw"/>
                         <outlet property="tableView" destination="i8A-Jy-1FP" id="Bfb-m7-Kx6"/>
@@ -53,10 +51,9 @@
         <!--Navigation Controller-->
         <scene sceneID="vPx-xN-luL">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" hidesBarsOnSwipe="YES" id="BDg-6J-LIE" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" hidesBarsOnSwipe="YES" id="BDg-6J-LIE" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="8g7-nq-HRa">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -69,7 +66,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U9T-sx-ldg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="131.8840579710145" y="109.82142857142857"/>
+            <point key="canvasLocation" x="1074" y="110"/>
         </scene>
     </scenes>
     <resources>
