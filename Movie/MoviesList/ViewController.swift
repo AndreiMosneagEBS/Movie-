@@ -10,6 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     private var movies: [Movie] = []
+    private var genres: [NameGenre] = []
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -19,6 +20,8 @@ class ViewController: UIViewController {
         getMovies()
         registerCell()
         setSuperViews()
+        getGenre()
+
     }
     
     private func registerCell() {
@@ -54,6 +57,20 @@ class ViewController: UIViewController {
         }
     }
     
+    private func getGenre() {
+        Request.shared.getGenre {result in
+            switch result {
+            case .success(let genres):
+                
+                self.genres = genres
+                
+                self.tableView.reloadData()
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     private func setSuperViews(){
         tableView.contentInsetAdjustmentBehavior = .never
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -61,12 +78,10 @@ class ViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = true
         self.view.backgroundColor = UIColor.clear
         self.navigationController?.navigationBar.tintColor = .clear
+        tableView.showsVerticalScrollIndicator = false
 
     }
-    
 }
-
-
 
 extension ViewController : UITableViewDelegate, UITableViewDataSource {
     
@@ -76,7 +91,7 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MovieTableViewCell.identifier, for: indexPath) as! MovieTableViewCell
-        cell.setup(model: movies[indexPath.row])
+        cell.setup(model: movies[indexPath.row], genres: genres)
         return cell
     }
     
@@ -89,10 +104,12 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
         let viewController = UIStoryboard(name: "MovieDetails", bundle: nil).instantiateViewController(withIdentifier: "MovieViewController") as? MovieViewController
         if let viewController = viewController {
             viewController.movie = movies[indexPath.row]
+            viewController.gen = genres
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
     
+   
 }
 
 extension ViewController: UISearchBarDelegate {

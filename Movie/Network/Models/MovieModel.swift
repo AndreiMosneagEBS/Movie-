@@ -24,8 +24,10 @@ struct Movie: Codable, Equatable {
     let popularity: Double
     let overview: String
     let id: Int
+    let genreIds: [Int]
 
     enum CodingKeys: String, CodingKey {
+        
 
         case originalLanguage = "original_language"
         case posterPath = "poster_path"
@@ -33,6 +35,7 @@ struct Movie: Codable, Equatable {
         case title
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
+        case genreIds = "genre_ids"
         case overview, popularity, id
     }
 }
@@ -88,4 +91,14 @@ struct AuthorDetails: Codable {
         case avatarPath = "avatar_path"
         case rating
     }
+}
+
+struct Genre: Codable {
+    let genres: [NameGenre]
+}
+
+// MARK: - Genre
+struct NameGenre: Codable {
+    let id: Int?
+    let name: String?
 }

@@ -16,12 +16,14 @@ enum TypeCell {
 class MovieViewController: UIViewController {
     
     var movie: Movie?
+    var gen: [NameGenre] = []
+    
     private var reviews: [Review] = []
     private var sections: [MovieCellType.Section] = []
     private var typeCell: SelectedTab = .reviews
+    
+    @IBOutlet weak var backButtonOutlet: UIButton!
     @IBOutlet weak var writeReview: UIButton!
-    
-    
     @IBOutlet private weak var tableView: UITableView!
      
     override func viewDidLoad() {
@@ -49,6 +51,8 @@ class MovieViewController: UIViewController {
     
     private func setButton() {
         writeReview.layer.cornerRadius = 8
+        backButtonOutlet.tintColor = UIColor(red:  0.38, green: 0.43, blue: 0.87, alpha: 1.0)
+        tableView.showsVerticalScrollIndicator = false
     }
     
     //MARK: - Generate cell
@@ -150,7 +154,7 @@ extension MovieViewController: UITableViewDelegate,  UITableViewDataSource  {
             
         case .header(let model):
             let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCartTableViewCell", for: indexPath) as! MovieCartTableViewCell
-            cell.setup(model: model, review: reviews, type: typeCell)
+            cell.setup(model: model, review: reviews, type: typeCell, genres: gen)
             
             cell.onTapReview = { [weak self] in
                 self?.typeCell = .reviews

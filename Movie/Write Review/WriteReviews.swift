@@ -8,51 +8,45 @@
 import UIKit
 import Cosmos
 import TinyConstraints
+import SwiftUI
 
 
 
 class WriteReviews: UIViewController {
 
     var movieReview: Movie?
+    let colorClick: UIColor = UIColor(red: 0.38, green: 0.43, blue: 0.87, alpha: 1.0)
+    let colorNotClick:  UIColor = UIColor(red: 0.38, green: 0.43, blue: 0.87, alpha: 0.5)
     
     
-    @IBOutlet var keyboardHeightLayoutConstraint: NSLayoutConstraint?
-    @IBOutlet weak var cosmosView: CosmosView!
-    @IBOutlet weak var movieTitle: UILabel!
-    @IBOutlet weak var imageView: UIImageView!
-    
+    @IBOutlet weak var scrolViews: UIScrollView!
+    @IBOutlet private var keyboardHeightLayoutConstraint: NSLayoutConstraint?
+    @IBOutlet private weak var cosmosView: CosmosView!
+    @IBOutlet private weak var movieTitle: UILabel!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textTitle: UITextField!
+    @IBOutlet private weak var textReview: UITextField!
+    @IBOutlet private weak var submitButton: UIButton!
+    @IBOutlet private weak var backButtonOutlet: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setStar()
         showKeyboard()
-        self.hideKeyboardWhenTappedAround()
         setup ()
+        setupButton()
+        self.hideKeyboardWhenTappedAround()
+        textTitle.delegate = self
+        textReview.delegate = self
     }
     
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.textColor == UIColor.lightGray {
-            textView.text = nil
-            textView.textColor = UIColor.black
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.isEmpty {
-            textView.text = "Placeholder"
-            textView.textColor = UIColor.lightGray
-        }
-    }
     private func setup () {
-        print(movieReview)
         guard let movie = movieReview else {
             return
         }
         imageView.setImage(with: "\(IMAGE_URL)\(movie.posterPath)")
         movieTitle.text = movie.title
     }
-    
     
     private func setStar() {
         cosmosView.settings.filledImage = UIImage(named: "Star")?.withRenderingMode(.alwaysOriginal)
@@ -62,6 +56,13 @@ class WriteReviews: UIViewController {
         cosmosView.settings.fillMode = .half
         cosmosView.rating = 0
     }
+    
+    private func setupButton(){
+        submitButton.layer.cornerRadius = 8
+        backButtonOutlet.tintColor = UIColor(red: 0.38, green: 0.43, blue: 0.87, alpha: 1.0)
+        scrolViews.showsVerticalScrollIndicator = false
+    }
+    
     
     // MARK: - Show keyboard
     
@@ -98,6 +99,7 @@ class WriteReviews: UIViewController {
             completion: nil)
     }
     
+    
     @IBAction private func popToBack(_ sender: AnyObject? = nil) {
            if let navigation = self.navigationController, navigation.children.count > 1 {
                navigation.popViewController(animated: true)
@@ -106,5 +108,33 @@ class WriteReviews: UIViewController {
            }
        }
     
-    
+    @IBAction func submitButtonAction(_ sender: Any) {
+        if submitButton.backgroundColor == colorClick {
+            let alert = UIAlertController(title: "Review",
+                                          message: "Your review is sent ",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Back", style: .default, handler: { [self](action) in
+                popToBack()
+            }))
+            self.present(alert, animated: true)
+        }
+        
+    }
+  
 }
+extension WriteReviews: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let text = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+      
+        if !text.isEmpty  {
+            submitButton.backgroundColor = colorClick
+        } else {
+            submitButton.backgroundColor = colorNotClick
+
+        }
+        return true
+    }
+}
+
+

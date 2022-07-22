@@ -33,29 +33,27 @@ class MovieCartTableViewCell: BaseTableViewCell {
     @IBOutlet weak var typeOfMovie: UILabel!
     @IBOutlet weak var descriptionButtonOutlet: UIButton!
     @IBOutlet private weak var reviewsButtonOutlet: UIButton!
+    @IBOutlet weak var genres: UILabel!
     
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-     
-    }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         descriptionButtonOutlet.roundCorners([.topLeft, .topRight], radius: 8)
         reviewsButtonOutlet.roundCorners([.topLeft, .topRight], radius: 8)
-       
+    
 
     }
     
 
-    func setup(model: Movie, review: [Review], type: SelectedTab){
+    func setup(model: Movie, review: [Review], type: SelectedTab, genres: [NameGenre]){
         titleMovie.text = model.title
         averageStar.text = String(model.voteAverage)
         years.text = model.releaseDate
-        
         reviewsButtonOutlet.setTitle("Reviews (\(review.count))", for: .normal)
+        for id in model.genreIds {
+            self.genres.text?.append("\(genres.first(where: { $0.id == id})?.name ?? "") ")
+        }
         
         switch type {
         case .reviews:

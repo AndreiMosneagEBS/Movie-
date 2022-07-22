@@ -124,6 +124,7 @@
             <connections>
                 <outlet property="averageStar" destination="WI3-LR-UBh" id="qJs-bR-0vT"/>
                 <outlet property="descriptionButtonOutlet" destination="Klv-qC-3Xl" id="5h3-eo-7EO"/>
+                <outlet property="genres" destination="BRU-Io-zcd" id="GCR-9H-8rm"/>
                 <outlet property="reviewsButtonOutlet" destination="HrB-4X-z83" id="JRx-ro-SiU"/>
                 <outlet property="titleMovie" destination="aah-Rq-bIV" id="Ukm-gg-zaO"/>
                 <outlet property="typeOfMovie" destination="BRU-Io-zcd" id="zZb-mP-rge"/>

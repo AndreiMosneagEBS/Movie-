@@ -32,7 +32,7 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Action, Adventures, Fantasy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BdX-2z-ICJ">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BdX-2z-ICJ">
                         <rect key="frame" x="124" y="66" width="238" height="24"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="24" id="yRe-eH-WLt"/>
@@ -99,6 +99,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="genres" destination="BdX-2z-ICJ" id="ggd-wK-Q8n"/>
                 <outlet property="imageOnCell" destination="CeU-nM-m9w" id="CeW-mS-fMl"/>
                 <outlet property="titleMovie" destination="wG4-Mg-yuM" id="0ea-Mn-a8e"/>
                 <outlet property="typeMovie" destination="BdX-2z-ICJ" id="M22-dF-q8N"/>

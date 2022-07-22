@@ -67,6 +67,25 @@ class Request {
         }
     }
     
+    func getGenre(completion: @escaping (Result<[NameGenre],Error>)-> Void) {
+        AF.request("https://api.themoviedb.org/3/genre/movie/list?api_key=\(API_KEY)").response { response in
+            switch response.result {
+            case .success(let values):
+                if let values = values {
+                    let movies = try? self.decoder.decode(Genre.self, from: values)
+                    if let movies = movies {
+                        completion(.success(movies.genres))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
+    
+    
     
 }
 
