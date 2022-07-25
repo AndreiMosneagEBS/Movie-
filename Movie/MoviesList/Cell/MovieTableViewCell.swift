@@ -31,25 +31,22 @@ class MovieTableViewCell: UITableViewCell {
         genres.text = ""
 
     }
-//
-//    func setGen(modeGen: [NameGenre], modelMovie: [Int]) -> [String] {
-//        var genres: [String] = []
-//        for id in modelMovie {
-//            genres.append(modeGen.first(where: { $0.id == id})?.name ?? "")
-//        }
-//        return genres
-//    }
-//
     
-     func sertImage() {
+     private func sertImage() {
         imageOnCell.layer.cornerRadius = 8
         imageOnCell.layer.borderColor = UIColor.red.cgColor
     }
     
+    private func setData(dataAPI: String)-> String {
+         let data = "\(dataAPI.prefix(4))"
+         return data
+         
+     }
+    
     func setup(model: Movie, genres: [NameGenre]) {
         titleMovie.text = model.title
         voteAverageMovie.text = "\(model.voteAverage)"
-        yersMovie.text = model.releaseDate
+        yersMovie.text = setData(dataAPI: model.releaseDate)
         imageOnCell.setImage(with: "\(IMAGE_URL)\(model.posterPath)")
     
         for id in model.genreIds {

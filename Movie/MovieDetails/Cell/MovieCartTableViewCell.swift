@@ -41,11 +41,12 @@ class MovieCartTableViewCell: BaseTableViewCell {
         super.layoutSubviews()
         descriptionButtonOutlet.roundCorners([.topLeft, .topRight], radius: 8)
         reviewsButtonOutlet.roundCorners([.topLeft, .topRight], radius: 8)
-    
-
     }
     
+   
 
+    
+    
     func setup(model: Movie, review: [Review], type: SelectedTab, genres: [NameGenre]){
         titleMovie.text = model.title
         averageStar.text = String(model.voteAverage)

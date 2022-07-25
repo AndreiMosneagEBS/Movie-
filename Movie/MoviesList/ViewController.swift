@@ -11,6 +11,7 @@ class ViewController: UIViewController {
     
     private var movies: [Movie] = []
     private var genres: [NameGenre] = []
+    var page: Int = 1
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -34,7 +35,7 @@ class ViewController: UIViewController {
     //MARK: - Requests
     
     private func getMovies() {
-        Request.shared.fetchMovies { result  in
+        Request.shared.fetchMovies(page: 1) { result  in
             switch result {
             case .success(let movies):
                 self.movies = movies
@@ -61,9 +62,7 @@ class ViewController: UIViewController {
         Request.shared.getGenre {result in
             switch result {
             case .success(let genres):
-                
                 self.genres = genres
-                
                 self.tableView.reloadData()
             case .failure(let error):
                 print(error.localizedDescription)
@@ -78,8 +77,18 @@ class ViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = true
         self.view.backgroundColor = UIColor.clear
         self.navigationController?.navigationBar.tintColor = .clear
-        tableView.showsVerticalScrollIndicator = false
+//        tableView.showsVerticalScrollIndicator = false
 
+    }
+    
+    private func createSpinnerFooter()-> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 100))
+        let spinner = UIActivityIndicatorView()
+        spinner.center = footerView.center
+        footerView.addSubview(spinner)
+        spinner.startAnimating()
+        
+        return footerView
     }
 }
 
@@ -108,26 +117,51 @@ extension ViewController : UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
-    
-   
 }
 
 extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        let input = NSString(string: searchBar.text!).replacingCharacters(in: range, with: text)
-        self.search(input: input)
-        tableView.reloadData()
+        if text.isEmpty {
+            getMovies()
+            searchBar.showsCancelButton = false
+        }else {
+            let input = NSString(string: searchBar.text!).replacingCharacters(in: range, with: text)
+            self.search(input: input)
+        }
         return true
         
     }
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            searchBar.showsCancelButton = false
-            self.search(input: "")
-            return
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//
+//    }
+}
+
+extension ViewController :  UIScrollViewDelegate {     // Modificat
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let position = scrollView.contentOffset.y
+        if position > (tableView.contentSize.height-100-scrollView.frame.size.height) {
+            guard !Request.shared.isPagination else {
+                return
+            }
+            self.tableView.tableFooterView = createSpinnerFooter()
+            Request.shared.fetchMovies(pagination: true ,page:page) { result  in
+                DispatchQueue.main.async {
+                    self.tableView.tableFooterView = nil
+                }
+                switch result {
+                case .success(let movies):
+                    self.page += 1
+                    self.movies.append(contentsOf: movies)
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
         }
-        self.search(input: searchText)
     }
+
 }

@@ -17,6 +17,7 @@ class MovieViewController: UIViewController {
     
     var movie: Movie?
     var gen: [NameGenre] = []
+    var details: Details?
     
     private var reviews: [Review] = []
     private var sections: [MovieCellType.Section] = []
@@ -34,7 +35,11 @@ class MovieViewController: UIViewController {
         getReviews(movieId: movie?.id)
         generateImageHeader()
         setButton()
+        getDetails(id: movie?.id ?? 0)
+        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 80, right: 0)  // Modificat 
     }
+    
+    
     
     //MARK: - Register cell
     
@@ -71,7 +76,9 @@ class MovieViewController: UIViewController {
         
         switch typeCell {
         case .description:
-            aboutMovieCells.append(.description(movie.overview))
+            if let details = details {
+                aboutMovieCells.append(.description(details.overview))
+            }
             
         case .reviews:
             if reviews.count > 0 {
@@ -112,6 +119,18 @@ class MovieViewController: UIViewController {
             }
         }
     }
+    
+    private func getDetails(id: Int) {
+        Request.shared.getDetails(query: id) { result in
+            switch result {
+            case.success(let details):
+                self.details = details
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     //MARK: - Action
     
     @IBAction func writeReviews(_ sender: Any) {

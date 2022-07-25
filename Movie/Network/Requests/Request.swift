@@ -13,22 +13,31 @@ import Foundation
 class Request {
     
     static let shared = Request()
+    var isPagination = false
     let decoder = JSONDecoder()
     
-    func fetchMovies(completion: @escaping (Result<[Movie],Error>)-> Void) {
-        AF.request("https://api.themoviedb.org/3/discover/movie?api_key=\(API_KEY)").response { response in
+    func fetchMovies(pagination:Bool = false, page: Int, completion: @escaping (Result<[Movie],Error>)-> Void) {
+        if pagination {
+            isPagination = true
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1, execute: {
+        AF.request("https://api.themoviedb.org/3/discover/movie?api_key=\(API_KEY)&page=\(page)").response { response in
             switch response.result {
             case .success(let values):
                 if let values = values {
                     let movies = try? self.decoder.decode(MovieResult.self, from: values)
                     if let movies = movies {
                         completion(.success(movies.results))
+                        }
                     }
+                if pagination {
+                    self.isPagination = false  
                 }
             case .failure(let error):
                 completion(.failure(error))
             }
         }
+        })
     }
     
     func searchMovies(query: String, completion: @escaping (Result<[Movie], Error>)->  Void ) {
@@ -83,7 +92,23 @@ class Request {
         }
     }
     
-    
+    func getDetails(query: Int, completion: @escaping (Result<Details, Error>)->  Void ) {
+        AF.request("https://api.themoviedb.org/3/movie/\(query)?api_key=\(API_KEY)", method: .get).response { response in
+            switch response.result {
+            case .success(let value):
+                guard let value = value else {return}
+                do {
+                    let reviews = try self.decoder.decode(Details.self, from: value)
+                    completion(.success(reviews))
+                    print( reviews)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
     
     
     

@@ -25,9 +25,15 @@ class ReviewTableViewCell: UITableViewCell {
     }
 
     
-    func setData(dataAPI: String)-> String {
+    private func setData(dataAPI: String)-> String {
         let data = "\(dataAPI.prefix(10))"
-        return data
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let date = formatter.date(from: data)
+        formatter.dateFormat = "dd MMMM, yyyy"
+        
+        return  formatter.string(from: date ?? Date())
 
     }
     
@@ -50,3 +56,5 @@ class ReviewTableViewCell: UITableViewCell {
     }
     
 }
+
+

@@ -102,3 +102,24 @@ struct NameGenre: Codable {
     let id: Int?
     let name: String?
 }
+
+
+
+
+
+struct Details: Codable {
+    let genres: [Genres]
+    let originalTitle: String
+    let overview: String
+
+    enum CodingKeys: String, CodingKey {
+        case genres
+        case originalTitle = "original_title"
+        case overview
+    }
+}
+
+struct Genres: Codable {
+    let id: Int
+    let name: String
+}
