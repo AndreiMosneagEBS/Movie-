@@ -35,10 +35,11 @@ class ViewController: UIViewController {
     //MARK: - Requests
     
     private func getMovies() {
-        Request.shared.fetchMovies(page: 1) { result  in
+        Request.shared.fetchMovies(page: page) { result  in
+            self.page += 1
             switch result {
             case .success(let movies):
-                self.movies = movies
+                self.movies.append(contentsOf: movies)
                 self.tableView.reloadData()
             case .failure(let error):
                 print(error.localizedDescription)
@@ -150,16 +151,7 @@ extension ViewController :  UIScrollViewDelegate {     // Modificat
                 DispatchQueue.main.async {
                     self.tableView.tableFooterView = nil
                 }
-                switch result {
-                case .success(let movies):
-                    self.page += 1
-                    self.movies.append(contentsOf: movies)
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                self.getMovies()
             }
         }
     }
